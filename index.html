@@ -727,4 +727,89 @@ function addAsset(tipo) {
   document.getElementById('assetsList').insertAdjacentHTML('beforeend', html);
 }
 
-//
+// Age calculation and hints
+function getAge() {
+  var nascInput = document.querySelector('input[name="nascimento"]');
+  if (!nascInput || !nascInput.value) return null;
+  var birth = new Date(nascInput.value);
+  var today = new Date();
+  var age = today.getFullYear() - birth.getFullYear();
+  var m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+}
+
+function updateAgeHints() {
+  var age = getAge();
+  var aposentInput = document.querySelector('input[name="aposent_idade"]');
+  var aposentHint = document.getElementById('aposentHint');
+  if (aposentInput && aposentHint && age !== null) {
+    var targetAge = parseInt(aposentInput.value);
+    if (targetAge && targetAge > age) {
+      aposentHint.textContent = 'Voce tem ' + age + ' anos. Faltam ' + (targetAge - age) + ' anos.';
+    } else if (targetAge && targetAge <= age) {
+      aposentHint.textContent = 'Voce ja tem ' + age + ' anos. Idade-alvo deve ser maior.';
+    } else {
+      aposentHint.textContent = age ? 'Sua idade atual: ' + age + ' anos' : '';
+    }
+  }
+  var goalInputs = document.querySelectorAll('.goal-age-input');
+  for (var i = 0; i < goalInputs.length; i++) {
+    var input = goalInputs[i];
+    var hint = input.parentElement.querySelector('.goal-age-hint');
+    if (hint && age !== null) {
+      var target = parseInt(input.value);
+      if (target && target > age) {
+        hint.textContent = 'Faltam ' + (target - age) + ' anos (voce tem ' + age + ')';
+      } else if (target && target <= age) {
+        hint.textContent = 'Idade-alvo deve ser maior que ' + age;
+      } else {
+        hint.textContent = '';
+      }
+    }
+  }
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.name === 'nascimento' || e.target.name === 'aposent_idade' || e.target.classList.contains('goal-age-input')) {
+    updateAgeHints();
+  }
+});
+
+// Submit
+function submitForm() {
+  var fd = new FormData(document.getElementById('diagnosticForm'));
+  var data = {};
+  var entries = fd.entries();
+  var entry = entries.next();
+  while (!entry.done) {
+    data[entry.value[0]] = entry.value[1];
+    entry = entries.next();
+  }
+  data.submitted_at = new Date().toISOString();
+
+  // Google Sheets integration
+  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhOC3b9qs2m7gncAYsszVJhRz33_sxth_PbUg9_Tz3r1C3OdW2Q_xN6TX01B34VcJP/exec';
+
+  if (GOOGLE_SCRIPT_URL) {
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }).catch(function(err) {
+      console.log('Sheets error:', err);
+    });
+  }
+
+  var sections = document.querySelectorAll('.form-section');
+  for (var i = 0; i < sections.length; i++) {
+    sections[i].classList.remove('active');
+  }
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('successScreen').classList.add('active');
+}
+
+showStep(1);
+</script>
+
+</body>
+</html>
