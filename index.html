@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostico Financeiro | Gustavo de Boer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F5F5;color:#0D0D0D;line-height:1.6}
+.hero{background:linear-gradient(135deg,#0D0D0D 0%,#1A1A1A 60%,#2a2207 100%);padding:48px 24px 56px;text-align:center}
+.hero-brand{display:inline-flex;align-items:center;gap:10px;margin-bottom:28px}
+.hero-icon{width:40px;height:40px;background:#F2C94C;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#0D0D0D}
+.hero-name{color:#fff;font-size:16px;font-weight:600}
+.hero h1{color:#fff;font-size:28px;font-weight:800;line-height:1.25;margin-bottom:14px}
+.hero h1 span{color:#F2C94C}
+.hero p{color:#9E9E9E;font-size:15px;max-width:480px;margin:0 auto}
+.progress-wrap{background:#fff;padding:16px 24px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.progress-info{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px}
+.step-label{font-weight:600}
+.step-count{color:#9E9E9E}
+.pbar{height:4px;background:#E0E0E0;border-radius:4px;overflow:hidden}
+.pbar-fill{height:100%;background:linear-gradient(90deg,#D4A017,#F2C94C);border-radius:4px;transition:width 0.4s}
+.wrap{max-width:640px;margin:0 auto;padding:24px 16px 100px}
+.card{background:#fff;border-radius:16px;padding:28px 22px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.04);display:none}
+.card.active{display:block}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.sec-ico{width:42px;height:42px;background:#FFF8E1;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-ico svg{width:22px;height:22px}
+.sec-head h2{font-size:18px;font-weight:700}
+.sec-head small{display:block;font-size:13px;color:#9E9E9E;margin-top:2px}
+.badge{display:flex;align-items:center;gap:8px;background:#FFF8E1;padding:12px 16px;border-radius:10px;margin-bottom:24px;font-size:13px;color:#555}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:6px}
+.req{color:#D4A017}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1.5px solid #E0E0E0;border-radius:10px;font-size:15px;font-family:inherit;color:#0D0D0D;background:#fff;outline:none}
+.field input:focus,.field select:focus{border-color:#F2C94C;box-shadow:0 0 0 3px rgba(242,201,76,0.15)}
+.field select{appearance:none;-webkit-appearance:none}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dlist{margin-top:8px}
+.ditem{background:#F5F5F5;border-radius:12px;padding:16px;margin-bottom:10px;position:relative;border:1px solid #E0E0E0}
+.ditem .rbtn{position:absolute;top:10px;right:10px;background:none;border:none;color:#E74C3C;cursor:pointer;font-size:16px;padding:4px}
+.abtn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:#fff;border:1.5px dashed #E0E0E0;border-radius:10px;color:#555;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:6px}
+.abtn:hover{border-color:#F2C94C;color:#D4A017;background:#FFF8E1}
+.nav{display:flex;gap:12px;margin-top:28px;padding-top:20px;border-top:1px solid #E0E0E0}
+.btn{flex:1;padding:14px 20px;border-radius:12px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;border:none}
+.btn-b{background:#F5F5F5;color:#555}
+.btn-n{background:linear-gradient(135deg,#F2C94C,#D4A017);color:#0D0D0D;box-shadow:0 4px 14px rgba(212,160,23,0.3)}
+.btn-s{background:linear-gradient(135deg,#0D0D0D,#1A1A1A);color:#F2C94C;box-shadow:0 4px 14px rgba(0,0,0,0.2)}
+.ok{display:none;text-align:center;padding:60px 24px}
+.ok.active{display:block}
+.ok-ico{width:72px;height:72px;background:#FFF8E1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.ok h2{font-size:22px;margin-bottom:10px}
+.ok p{color:#555;font-size:15px}
+.stitle{font-size:15px;font-weight:600;color:#555;margin-bottom:12px}
+.stitle-mt{margin-top:20px}
+.fixed-block{background:#FFF8E1;border:1.5px solid #F2C94C;border-radius:12px;padding:18px;margin-bottom:18px}
+.fixed-block-title{font-size:15px;font-weight:700;color:#0D0D0D;margin-bottom:4px}
+.fixed-block-sub{font-size:12px;color:#9E9E9E;margin-bottom:14px}
+.age-hint{font-size:12px;color:#9E9E9E;margin-top:4px}
+.separator{border:none;border-top:1.5px dashed #E0E0E0;margin:24px 0 18px}
+@media(max-width:480px){.hero{padding:36px 20px 44px}.hero h1{font-size:24px}.wrap{padding:16px 12px 100px}.card{padding:22px 18px}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-brand"><div class="hero-icon">GB</div><span class="hero-name">Gustavo de Boer</span></div><h1>Seu <span>diagnostico financeiro</span> personalizado</h1><p>Responda as perguntas abaixo para que eu possa montar uma estrategia sob medida para seus objetivos.</p></div>
+<div class="progress-wrap" id="pw"><div class="progress-info"><span class="step-label" id="sl">Dados pessoais</span><span class="step-count" id="sc">1 de 6</span></div><div class="pbar"><div class="pbar-fill" id="pf" style="width:17%"></div></div></div>
+<div class="wrap"><form id="f" onsubmit="return false">
+<div class="card active" data-step="1"><div class="sec-head"><div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><h2>Dados pessoais</h2><small>Informacoes basicas para contato</small></div></div>
+<div class="badge"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L3 3.5V7c0 3.5 2.1 6.2 5 7 2.9-.8 5-3.5 5-7V3.5L8 1z" fill="#D4A017"/><path d="M7 8.5l-1.5-1.5-.7.7L7 9.9l3.2-3.2-.7-.7L7 8.5z" fill="#fff"/></svg>Suas informacoes sao confidenciais e usadas apenas para seu atendimento.</div>
+<div class="field"><label>Nome completo <span class="req">*</span></label><input type="text" name="nome" placeholder="Digite seu nome completo" required></div>
+<div class="row"><div class="field"><label>CPF <span class="req">*</span></label><input type="text" name="cpf" placeholder="000.000.000-00" maxlength="14" required></div><div class="field"><label>Data de nascimento <span class="req">*</span></label><input type="date" name="nascimento" id="nascInput" required></div></div>
+<div class="field"><label>E-mail <span class="req">*</span></label><input type="email" name="email" placeholder="seu@email.com" required></div>
+<div class="row"><div class="field"><label>Telefone <span class="req">*</span></label><input type="text" name="telefone" placeholder="(00) 00000-0000" maxlength="15" required></div><div class="field"><label>Estado civil</label><select name="estado_civil"><option value="">Selecione</option><option>Solteiro(a)</option><option>Casado(a)</option><option>Uniao estavel</option><option>Divorciado(a)</option><option>Viuvo(a)</option></select></div></div>
+<div class="field"><label>Melhor horario para contato</label><input type="text" name="horario_contato" placeholder="Ex.: dias uteis apos 18h"></div>
+<div class="nav"><button type="button" class="btn btn-n" onclick="go(1)">Continuar</button></div></div>
+<div class="card" data-step="2"><div class="sec-head"><div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><h2>Estrutura familiar</h2><small>Membros que dependem financeiramente de voce</small></div></div>
+<div class="dlist" id="fL"></div><button type="button" class="abtn" onclick="aF()">+ Adicionar membro</button>
+<div class="nav"><button type="button" class="btn btn-b" onclick="go(-1)">Voltar</button><button type="button" class="btn btn-n" onclick="go(1)">Continuar</button></div></div>
+<div class="card" data-step="3"><div class="sec-head"><div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div><div><h2>Objetivos financeiros</h2><small>Defina suas metas de curto, medio e longo prazo</small></div></div>
+<div class="fixed-block"><div class="fixed-block-title">Aposentadoria</div><div class="fixed-block-sub">Este objetivo e obrigatorio para o seu planejamento</div><div class="row"><div class="field" style="margin-bottom:0"><label>Com qual idade deseja se aposentar? <span class="req">*</span></label><input type="number" name="aposent_idade" id="aposentIdade" placeholder="Ex.: 60" min="30" max="100" required><div class="age-hint" id="aposentHint"></div></div><div class="field" style="margin-bottom:0"><label>Renda mensal desejada <span class="req">*</span></label><input type="text" name="aposent_renda" placeholder="R$ 0,00" data-mask="m" required></div></div></div>
+<hr class="separator">
+<div class="stitle">Outros objetivos</div><div class="stitle" style="font-weight:400;font-size:13px;color:#9E9E9E;margin-top:-8px;margin-bottom:14px">Informe a idade em que deseja realizar cada objetivo</div>
+<div class="dlist" id="gL"></div><button type="button" class="abtn" onclick="aG()">+ Adicionar objetivo</button>
+<div class="nav"><button type="button" class="btn btn-b" onclick="go(-1)">Voltar</button><button type="button" class="btn btn-n" onclick="go(1)">Continuar</button></div></div>
+<div class="card" data-step="4"><div class="sec-head"><div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><h2>Rendas e despesas</h2><small>Seu fluxo financeiro mensal</small></div></div>
+<div class="stitle">Rendas</div><div class="dlist" id="iL"></div><button type="button" class="abtn" onclick="aI()">+ Adicionar renda</button>
+<div class="stitle stitle-mt">Despesas</div><div class="dlist" id="eL"></div><button type="button" class="abtn" onclick="aE()">+ Adicionar despesa</button>
+<div class="nav"><button type="button" class="btn btn-b" onclick="go(-1)">Voltar</button><button type="button" class="btn btn-n" onclick="go(1)">Continuar</button></div></div>
+<div class="card" data-step="5"><div class="sec-head"><div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><div><h2>Investimentos</h2><small>Seus investimentos atuais</small></div></div>
+<div class="stitle">Nacionais</div><div class="dlist" id="nL"></div><button type="button" class="abtn" onclick="aN()">+ Investimento nacional</button>
+<div class="stitle stitle-mt">Globais</div><div class="dlist" id="glL"></div><button type="button" class="abtn" onclick="aGL()">+ Investimento global</button>
+<div class="nav"><button type="button" class="btn btn-b" onclick="go(-1)">Voltar</button><button type="button" class="btn btn-n" onclick="go(1)">Continuar</button></div></div>
+<div class="card" data-step="6"><div class="sec-head"><div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><h2>Bens e participacoes</h2><small>Imoveis, veiculos e participacoes societarias</small></div></div>
+<div class="dlist" id="aL"></div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"><button type="button" class="abtn" onclick="aA('Imovel')">+ Imovel</button><button type="button" class="abtn" onclick="aA('Veiculo')">+ Veiculo</button><button type="button" class="abtn" onclick="aA('Participacao')">+ Participacao</button><button type="button" class="abtn" onclick="aA('Outro')">+ Outro bem</button></div>
+<div class="nav"><button type="button" class="btn btn-b" onclick="go(-1)">Voltar</button><button type="button" class="btn btn-s" onclick="sub()">Enviar diagnostico</button></div></div>
+</form>
+<div class="ok" id="ok"><div class="ok-ico"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div><h2>Diagnostico enviado!</h2><p>Obrigado por preencher. Entrarei em contato em breve para conversarmos sobre sua estrategia financeira.</p></div></div>
+<script>
+var cs=1,ts=6;
+var lb=['Dados pessoais','Estrutura familiar','Objetivos','Rendas e despesas','Investimentos','Bens e participacoes'];
+function getAge(){var d=document.getElementById('nascInput').value;if(!d)return null;var b=new Date(d);var t=new Date();var a=t.getFullYear()-b.getFullYear();var m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a;}
+function updateAgeHints(){var age=getAge();var hint=document.getElementById('aposentHint');var aposentVal=document.getElementById('aposentIdade').value;if(age!==null&&aposentVal){var diff=parseInt(aposentVal,10)-age;if(diff>0){hint.textContent='Sua idade atual: '+age+' anos. Faltam '+diff+' anos.';}else if(diff===0){hint.textContent='Sua idade atual: '+age+' anos. Voce ja esta nessa idade!';}else{hint.textContent='Sua idade atual: '+age+' anos. Essa idade ja passou.';}}else if(age!==null){hint.textContent='Sua idade atual: '+age+' anos.';}else{hint.textContent='Preencha sua data de nascimento no passo 1.';}var goalHints=document.querySelectorAll('.goal-age-hint');for(var i=0;i<goalHints.length;i++){var input=goalHints[i].previousElementSibling;if(age!==null&&input&&input.value){var gd=parseInt(input.value,10)-age;if(gd>0){goalHints[i].textContent='Faltam '+gd+' anos (idade atual: '+age+')';}else if(gd===0){goalHints[i].textContent='Voce ja esta nessa idade! (idade atual: '+age+')';}else{goalHints[i].textContent='Essa idade ja passou (idade atual: '+age+')';}}else if(age!==null){goalHints[i].textContent='Idade atual: '+age+' anos';}else{goalHints[i].textContent='';}}}
+function ss(n){var c=document.querySelectorAll('.card');for(var i=0;i<c.length;i++)c[i].classList.remove('active');var t=document.querySelector('[data-step="'+n+'"]');if(t)t.classList.add('active');document.getElementById('sl').textContent=lb[n-1];document.getElementById('sc').textContent=n+' de '+ts;document.getElementById('pf').style.width=Math.round((n/ts)*100)+'%';window.scrollTo(0,0);if(n===3)updateAgeHints();}
+function go(d){if(d>0&&cs===1){var r=document.querySelectorAll('[data-step="1"] [required]');for(var i=0;i<r.length;i++){if(!r[i].value.trim()){r[i].focus();r[i].style.borderColor='#E74C3C';return;}r[i].style.borderColor='';}}if(d>0&&cs===3){var ai=document.getElementById('aposentIdade');var ar=document.querySelector('[name="aposent_renda"]');if(!ai.value){ai.focus();ai.style.borderColor='#E74C3C';return;}ai.style.borderColor='';if(!ar.value){ar.focus();ar.style.borderColor='#E74C3C';return;}ar.style.borderColor='';}var nn=cs+d;if(nn>=1&&nn<=ts){cs=nn;ss(cs);}}
+function rm(b){b.parentElement.remove();}
+var ct={f:0,g:0,i:0,e:0,n:0,gl:0,a:0};
+function aF(){ct.f++;var id=ct.f;document.getElementById('fL').insertAdjacentHTML('beforeend','<div class="ditem"><button type="button" class="rbtn" onclick="rm(this)">X</button><div class="field"><label>Nome</label><input type="text" name="fam_'+id+'_nome" placeholder="Nome do membro"></div><div class="row"><div class="field"><label>Parentesco</label><select name="fam_'+id+'_par"><option value="">Selecione</option><option>Conjuge</option><option>Filho(a)</option><option>Pai/Mae</option><option>Outro</option></select></div><div class="field"><label>Idade</label><input type="number" name="fam_'+id+'_age" placeholder="Idade"></div></div><div class="field"><label>Dependente?</label><select name="fam_'+id+'_dep"><option>Sim</option><option>Nao</option></select></div></div>');}
+function aG(){ct.g++;var id=ct.g;document.getElementById('gL').insertAdjacentHTML('beforeend','<div class="ditem"><button type="button" class="rbtn" onclick="rm(this)">X</button><div class="field"><label>Qual o objetivo?</label><input type="text" name="obj_'+id+'_tipo" placeholder="Ex.: Compra de imovel, viagem, faculdade dos filhos..."></div><div class="row"><div class="field"><label>Com qual idade? <span class="req">*</span></label><input type="number" name="obj_'+id+'_idade" placeholder="Ex.: 45" min="1" max="120" oninput="updateAgeHints()"><div class="age-hint goal-age-hint"></div></div><div class="field"><label>Valor estimado</label><input type="text" name="obj_'+id+'_v" placeholder="R$ 0,00" data-mask="m"></div></div></div>');updateAgeHints();}
+function aI(){ct.i++;var id=ct.i;document.getElementById('iL').insertAdjacentHTML('beforeend','<div class="ditem"><button type="button" class="rbtn" onclick="rm(this)">X</button><div class="row"><div class="field"><label>Fonte</label><input type="text" name="ren_'+id+'_f" placeholder="Ex.: Salario CLT"></div><div class="field"><label>Valor mensal</label><input type="text" name="ren_'+id+'_v" placeholder="R$ 0,00" data-mask="m"></div></div></div>');}
+function aE(){ct.e++;var id=ct.e;document.getElementById('eL').insertAdjacentHTML('beforeend','<div class="ditem"><button type="button" class="rbtn" onclick="rm(this)">X</button><div class="row"><div class="field"><label>Descricao</label><input type="text" name="des_'+id+'_d" placeholder="Ex.: Aluguel, alimentacao..."></div><div class="field"><label>Valor mensal</label><input type="text" name="des_'+id+'_v" placeholder="R$ 0,00" data-mask="m"></div></div></div>');}
+function aN(){ct.n++;var id=ct.n;document.getElementById('nL').insertAdjacentHTML('beforeend','<div class="ditem"><button type="button" class="rbtn" onclick="rm(this)">X</button><div class="row"><div class="field"><label>Tipo</label><select name="inv_n_'+id+'_t"><option value="">Selecione</option><option>Renda Fixa</option><option>Acoes</option><option>Fundos</option><option>Previdencia</option><option>Tesouro Direto</option><option>Poupanca</option><option>Outro</option></select></div><div class="field"><label>Valor</label><input type="text" name="inv_n_'+id+'_v" placeholder="R$ 0,00" data-mask="m"></div></div><div class="field"><label>Instituicao</label><input type="text" name="inv_n_'+id+'_i" placeholder="Ex.: XP, BTG, Nubank..."></div></div>');}
+function aGL(){ct.gl++;var id=ct.gl;document.getElementById('glL').insertAdjacentHTML('beforeend','<div class="ditem"><button type="button" class="rbtn" onclick="rm(this)">X</button><div class="row"><div class="field"><label>Tipo</label><select name="inv_g_'+id+'_t"><option value="">Selecione</option><option>ETFs</option><option>Stocks</option><option>REITs</option><option>Bonds</option><option>Crypto</option><option>Outro</option></select></div><div class="field"><label>Valor (USD)</label><input type="text" name="inv_g_'+id+'_v" placeholder="US$ 0.00"></div></div><div class="field"><label>Plataforma</label><input type="text" name="inv_g_'+id+'_p" placeholder="Ex.: Avenue, Interactive Brokers..."></div></div>');}
+function aA(tipo){ct.a++;var id=ct.a;document.getElementById('aL').insertAdjacentHTML('beforeend','<div class="ditem"><button type="button" class="rbtn" onclick="rm(this)">X</button><div class="field"><label>Tipo</label><input type="text" name="bem_'+id+'_t" value="'+tipo+'" readonly style="background:#F5F5F5"></div><div class="field"><label>Descricao</label><input type="text" name="bem_'+id+'_d" placeholder="Ex.: Apartamento 2 quartos em SP"></div><div class="field"><label>Valor estimado</label><input type="text" name="bem_'+id+'_v" placeholder="R$ 0,00" data-mask="m"></div></div>');}
+document.addEventListener('input',function(ev){var el=ev.target;if(el.name==='cpf'){var v=el.value.replace(/\D/g,'').substring(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');el.value=v;}if(el.name==='telefone'){var v=el.value.replace(/\D/g,'').substring(0,11);v=v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2');el.value=v;}if(el.getAttribute('data-mask')==='m'){var v=el.value.replace(/\D/g,'');if(!v){el.value='';return;}var n=parseInt(v,10)/100;el.value='R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}if(el.id==='aposentIdade')updateAgeHints();});
+function sub(){var fd=new FormData(document.getElementById('f'));var data={};var it=fd.entries();var r=it.next();while(!r.done){data[r.value[0]]=r.value[1];r=it.next();}data.enviado_em=new Date().toISOString();var age=getAge();if(age!==null)data.idade_atual=age;var URL_SHEETS='';if(URL_SHEETS){fetch(URL_SHEETS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}var c=document.querySelectorAll('.card');for(var i=0;i<c.length;i++)c[i].classList.remove('active');document.getElementById('pw').style.display='none';document.getElementById('ok').classList.add('active');}
+ss(1);
+</script>
+</body>
+</html>
