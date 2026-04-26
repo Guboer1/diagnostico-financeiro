@@ -298,6 +298,29 @@
     margin-bottom: 12px;
   }
   .sub-title-mt { margin-top: 20px; }
+  .fixed-block {
+    background: var(--gold-light);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+  .fixed-block-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .fixed-block-title svg { width: 18px; height: 18px; }
+  .goal-age-hint {
+    font-size: 12px;
+    color: var(--gold-dark);
+    margin-top: 4px;
+    font-style: italic;
+  }
   @media (max-width: 480px) {
     .hero { padding: 36px 20px 44px; }
     .hero h1 { font-size: 24px; }
@@ -422,6 +445,26 @@
           <div class="sub">O que voce deseja conquistar?</div>
         </div>
       </div>
+
+      <div class="fixed-block">
+        <div class="fixed-block-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Aposentadoria (obrigatorio)
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Idade desejada para aposentar <span class="req">*</span></label>
+            <input type="number" name="aposent_idade" placeholder="Ex.: 60" min="1" max="120" required>
+            <div class="goal-age-hint" id="aposentHint"></div>
+          </div>
+          <div class="field">
+            <label>Renda mensal desejada <span class="req">*</span></label>
+            <input type="text" name="aposent_renda" placeholder="R$ 0,00" data-mask="money" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-title">Outros objetivos</div>
       <div class="dynamic-list" id="goalsList"></div>
       <button type="button" class="add-btn" onclick="addGoal()">+ Adicionar objetivo</button>
       <div class="nav-buttons">
@@ -530,16 +573,14 @@ function showStep(n) {
 }
 
 function nextStep() {
-  if (currentStep === 1) {
-    var fields = document.querySelectorAll('[data-step="1"] [required]');
-    for (var i = 0; i < fields.length; i++) {
-      if (!fields[i].value.trim()) {
-        fields[i].focus();
-        fields[i].style.borderColor = 'var(--red)';
-        return;
-      }
-      fields[i].style.borderColor = '';
+  var stepFields = document.querySelectorAll('[data-step="' + currentStep + '"] [required]');
+  for (var i = 0; i < stepFields.length; i++) {
+    if (!stepFields[i].value.trim()) {
+      stepFields[i].focus();
+      stepFields[i].style.borderColor = 'var(--red)';
+      return;
     }
+    stepFields[i].style.borderColor = '';
   }
   if (currentStep < totalSteps) {
     currentStep++;
@@ -610,13 +651,14 @@ function addGoal() {
   var id = counters.goal;
   var html = '<div class="dynamic-item">'
     + '<button type="button" class="remove-btn" onclick="removeItem(this)">X</button>'
-    + '<div class="field"><label>Objetivo</label><input type="text" name="objetivo_' + id + '_desc" placeholder="Ex.: Aposentadoria, casa propria..."></div>'
+    + '<div class="field"><label>O que voce deseja?</label><input type="text" name="obj_' + id + '_tipo" placeholder="Ex.: Compra de imovel, viagem, faculdade dos filhos..."></div>'
     + '<div class="field-row">'
-    + '<div class="field"><label>Prazo</label><select name="objetivo_' + id + '_prazo"><option value="">Selecione</option><option>Curto prazo (ate 2 anos)</option><option>Medio prazo (2-5 anos)</option><option>Longo prazo (5+ anos)</option></select></div>'
-    + '<div class="field"><label>Valor estimado</label><input type="text" name="objetivo_' + id + '_valor" placeholder="R$ 0,00" data-mask="money"></div>'
+    + '<div class="field"><label>Idade-alvo para atingir</label><input type="number" name="obj_' + id + '_idade" class="goal-age-input" placeholder="Ex.: 45" min="1" max="120"><div class="goal-age-hint"></div></div>'
+    + '<div class="field"><label>Valor estimado</label><input type="text" name="obj_' + id + '_valor" placeholder="R$ 0,00" data-mask="money"></div>'
     + '</div>'
     + '</div>';
   document.getElementById('goalsList').insertAdjacentHTML('beforeend', html);
+  updateAgeHints();
 }
 
 function addIncome() {
@@ -685,48 +727,4 @@ function addAsset(tipo) {
   document.getElementById('assetsList').insertAdjacentHTML('beforeend', html);
 }
 
-// Submit
-function submitForm() {
-  var fd = new FormData(document.getElementById('diagnosticForm'));
-  var data = {};
-  var entries = fd.entries();
-  var entry = entries.next();
-  while (!entry.done) {
-    data[entry.value[0]] = entry.value[1];
-    entry = entries.next();
-  }
-  data.submitted_at = new Date().toISOString();
-
-  // Google Sheets integration
-  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhOC3b9qs2m7gncAYsszVJhRz33_sxth_PbUg9_Tz3r1C3OdW2Q_xN6TX01B34VcJP/exec';
-
-  if (GOOGLE_SCRIPT_URL) {
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(data)
-    });
-  }
-
-  // Download backup JSON
-  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'diagnostico_' + (data.nome || 'cliente') + '_' + new Date().toISOString().substring(0, 10) + '.json';
-  // a.click(); // Descomente para baixar JSON automaticamente
-
-  var sections = document.querySelectorAll('.form-section');
-  for (var i = 0; i < sections.length; i++) {
-    sections[i].classList.remove('active');
-  }
-  document.getElementById('progressWrap').style.display = 'none';
-  document.getElementById('successScreen').classList.add('active');
-}
-
-showStep(1);
-</script>
-
-</body>
-</html>
+//
