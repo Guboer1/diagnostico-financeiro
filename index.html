@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Diagnostico Financeiro | Gustavo de Boer</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
   :root {
@@ -185,6 +188,36 @@
     box-shadow: 0 0 0 3px rgba(242,201,76,0.15);
   }
   .field input::placeholder, .field textarea::placeholder { color: var(--gray-400); }
+  .field-error { color: var(--red); font-size: 12px; margin-top: 4px; display: none; }
+  .field.has-error .field-error { display: block; }
+  .field.has-error input, .field.has-error select, .field.has-error textarea {
+    border-color: var(--red) !important;
+    box-shadow: 0 0 0 3px rgba(231,76,60,0.1);
+  }
+  .validation-toast {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--red);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 200;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(231,76,60,0.3);
+  }
+  .validation-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .shake { animation: shake 0.3s ease; }
   .field textarea { resize: vertical; min-height: 80px; }
   .field select {
     appearance: none;
@@ -554,6 +587,8 @@
   </div>
 </div>
 
+<div class="validation-toast" id="validationToast"></div>
+
 <script>
 var currentStep = 1;
 var totalSteps = 6;
@@ -572,15 +607,42 @@ function showStep(n) {
   window.scrollTo(0, 0);
 }
 
+function showToast(msg) {
+  var toast = document.getElementById('validationToast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(function() { toast.classList.remove('show'); }, 3000);
+}
+
+function clearFieldErrors() {
+  var errorFields = document.querySelectorAll('.field.has-error');
+  for (var i = 0; i < errorFields.length; i++) {
+    errorFields[i].classList.remove('has-error');
+  }
+}
+
 function nextStep() {
+  clearFieldErrors();
   var stepFields = document.querySelectorAll('[data-step="' + currentStep + '"] [required]');
+  var firstInvalid = null;
+  var invalidCount = 0;
   for (var i = 0; i < stepFields.length; i++) {
-    if (!stepFields[i].value.trim()) {
-      stepFields[i].focus();
-      stepFields[i].style.borderColor = 'var(--red)';
-      return;
+    if (!stepFields[i].value || !stepFields[i].value.trim()) {
+      var fieldWrap = stepFields[i].closest('.field');
+      if (fieldWrap) fieldWrap.classList.add('has-error');
+      if (!firstInvalid) firstInvalid = stepFields[i];
+      invalidCount++;
     }
-    stepFields[i].style.borderColor = '';
+  }
+  if (firstInvalid) {
+    firstInvalid.focus();
+    firstInvalid.closest('.form-section').classList.add('shake');
+    setTimeout(function() {
+      var section = document.querySelector('.form-section.shake');
+      if (section) section.classList.remove('shake');
+    }, 400);
+    showToast('Preencha ' + (invalidCount === 1 ? 'o campo obrigatorio' : 'os ' + invalidCount + ' campos obrigatorios') + ' para continuar');
+    return;
   }
   if (currentStep < totalSteps) {
     currentStep++;
@@ -616,12 +678,17 @@ function maskMoney(el) {
   el.value = 'R$ ' + num.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
-// Attach masks
+// Attach masks and clear errors on input
 document.addEventListener('input', function(e) {
   var el = e.target;
   if (el.name === 'cpf') maskCPF(el);
   if (el.name === 'telefone') maskPhone(el);
   if (el.getAttribute('data-mask') === 'money') maskMoney(el);
+  // Clear error state when user starts typing
+  var fieldWrap = el.closest('.field');
+  if (fieldWrap && fieldWrap.classList.contains('has-error')) {
+    fieldWrap.classList.remove('has-error');
+  }
 });
 
 // Dynamic items
@@ -741,6 +808,7 @@ function getAge() {
 
 function updateAgeHints() {
   var age = getAge();
+  // Aposentadoria hint
   var aposentInput = document.querySelector('input[name="aposent_idade"]');
   var aposentHint = document.getElementById('aposentHint');
   if (aposentInput && aposentHint && age !== null) {
@@ -753,6 +821,7 @@ function updateAgeHints() {
       aposentHint.textContent = age ? 'Sua idade atual: ' + age + ' anos' : '';
     }
   }
+  // Other goals hints
   var goalInputs = document.querySelectorAll('.goal-age-input');
   for (var i = 0; i < goalInputs.length; i++) {
     var input = goalInputs[i];
@@ -797,10 +866,20 @@ function submitForm() {
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(data)
+    }).then(function() {
+      console.log('Enviado para Google Sheets');
     }).catch(function(err) {
       console.log('Sheets error:', err);
     });
   }
+
+  // Download backup JSON
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'diagnostico_' + (data.nome || 'cliente') + '_' + new Date().toISOString().substring(0, 10) + '.json';
+  // a.click(); // Descomente para baixar JSON automaticamente
 
   var sections = document.querySelectorAll('.form-section');
   for (var i = 0; i < sections.length; i++) {
