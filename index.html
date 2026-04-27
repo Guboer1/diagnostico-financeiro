@@ -789,11 +789,13 @@ function submitForm() {
   data.submitted_at = new Date().toISOString();
 
   // Google Sheets integration
-  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhOC3b9qs2m7gncAYsszVJhRz33_sxth_PbUg9_Tz3r1C3OdW2Q_xN6TX01B34VcJP/exec';
+  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjXJvOMXtxpv-tJJoNwDWBg_ICLDVzihslz-9AF-V4QUVYImm2bmtXFDwERs1e_ygq/exec';
 
   if (GOOGLE_SCRIPT_URL) {
     fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(data)
     }).catch(function(err) {
       console.log('Sheets error:', err);
