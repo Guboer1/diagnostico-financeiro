@@ -570,6 +570,21 @@
         <button type="button" class="add-btn" onclick="addAsset('Participacao societaria')">+ Participacao societaria</button>
         <button type="button" class="add-btn" onclick="addAsset('Outro bem')">+ Outro bem</button>
       </div>
+      <!-- Consentimento LGPD -->
+      <div style="margin-top:24px;padding:20px;border-radius:12px;background:rgba(212,160,23,0.06);border:1px solid rgba(212,160,23,0.2);">
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;">
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;"><path d="M8 1L3 3.5V7c0 3.5 2.1 6.2 5 7 2.9-.8 5-3.5 5-7V3.5L8 1z" fill="#D4A017"/><path d="M7 8.5l-1.5-1.5-.7.7L7 9.9l3.2-3.2-.7-.7L7 8.5z" fill="#fff"/></svg>
+          <div style="font-size:13px;color:#555;line-height:1.5;">
+            O preenchimento deste formulario e <strong>voluntario e de sua livre escolha</strong>. As informacoes fornecidas serao utilizadas <strong>exclusivamente para fins de diagnostico e planejamento financeiro</strong> relacionados ao seu atendimento, nao sendo compartilhadas com terceiros para outras finalidades. Voce pode solicitar a exclusao dos seus dados a qualquer momento.
+          </div>
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;background:rgba(255,255,255,0.7);border-radius:8px;border:1px solid #e0e0e0;transition:border-color .2s;" id="consentLabel">
+          <input type="checkbox" id="consentCheck" name="consentimento_lgpd" value="Sim" style="width:20px;height:20px;accent-color:#D4A017;cursor:pointer;flex-shrink:0;">
+          <span style="font-size:14px;font-weight:500;color:#1a1a1a;">Li e concordo com o uso dos meus dados conforme descrito acima.</span>
+        </label>
+        <div id="consentError" style="display:none;color:#D85A30;font-size:12px;margin-top:8px;padding-left:4px;">Voce precisa concordar com o termo para enviar o formulario.</div>
+      </div>
+
       <div class="nav-buttons">
         <button type="button" class="btn btn-back" onclick="prevStep()">Voltar</button>
         <button type="button" class="btn btn-submit" onclick="submitForm()">Enviar diagnostico</button>
@@ -847,6 +862,19 @@ document.addEventListener('input', function(e) {
 
 // Submit
 function submitForm() {
+  // Validar consentimento LGPD
+  var consentCheck = document.getElementById('consentCheck');
+  var consentError = document.getElementById('consentError');
+  var consentLabel = document.getElementById('consentLabel');
+  if (!consentCheck.checked) {
+    consentError.style.display = 'block';
+    consentLabel.style.borderColor = '#D85A30';
+    consentLabel.scrollIntoView({behavior: 'smooth', block: 'center'});
+    return;
+  }
+  consentError.style.display = 'none';
+  consentLabel.style.borderColor = '#D4A017';
+
   var fd = new FormData(document.getElementById('diagnosticForm'));
   var data = {};
   var entries = fd.entries();
@@ -855,6 +883,8 @@ function submitForm() {
     data[entry.value[0]] = entry.value[1];
     entry = entries.next();
   }
+  data.consentimento_lgpd = consentCheck.checked ? 'Sim' : 'Nao';
+  data.consentimento_data = new Date().toISOString();
   data.submitted_at = new Date().toISOString();
 
   // Google Sheets integration
