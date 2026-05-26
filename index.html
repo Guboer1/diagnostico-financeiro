@@ -3,922 +3,311 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diagnostico Financeiro | Gustavo de Boer</title>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<title>Dashboard Financeiro — Maio/2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #F2C94C;
-    --gold-dark: #D4A017;
-    --gold-light: #FFF8E1;
-    --black: #0D0D0D;
-    --dark: #1A1A1A;
-    --gray-700: #555555;
-    --gray-400: #9E9E9E;
-    --gray-200: #E0E0E0;
-    --gray-100: #F5F5F5;
-    --white: #FFFFFF;
-    --red: #E74C3C;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--gray-100);
-    color: var(--black);
-    line-height: 1.6;
-  }
-  .hero {
-    background: linear-gradient(135deg, var(--black) 0%, var(--dark) 60%, #2a2207 100%);
-    padding: 48px 24px 56px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -30%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(242,201,76,0.12) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .hero-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 28px;
-    position: relative;
-  }
-  .hero-brand-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--gold);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--black);
-  }
-  .hero-brand-name {
-    color: var(--white);
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-  .hero h1 {
-    color: var(--white);
-    font-size: 28px;
-    font-weight: 800;
-    line-height: 1.25;
-    margin-bottom: 14px;
-    position: relative;
-  }
-  .hero h1 span { color: var(--gold); }
-  .hero p {
-    color: var(--gray-400);
-    font-size: 15px;
-    max-width: 480px;
-    margin: 0 auto;
-    font-weight: 300;
-    position: relative;
-  }
-  .progress-wrap {
-    background: var(--white);
-    padding: 16px 24px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  }
-  .progress-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 13px;
-  }
-  .progress-info .step-label { font-weight: 600; color: var(--black); }
-  .progress-info .step-count { color: var(--gray-400); }
-  .progress-bar {
-    height: 4px;
-    background: var(--gray-200);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
-    border-radius: 4px;
-    transition: width 0.4s ease;
-  }
-  .form-container {
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 24px 16px 100px;
-  }
-  .form-section {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 28px 22px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    display: none;
-  }
-  .form-section.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-  .section-icon {
-    width: 42px;
-    height: 42px;
-    background: var(--gold-light);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .section-icon svg { width: 22px; height: 22px; }
-  .section-header h2 {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--black);
-  }
-  .section-header .sub {
-    font-size: 13px;
-    color: var(--gray-400);
-    margin-top: 2px;
-  }
-  .field { margin-bottom: 18px; }
-  .field label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--gray-700);
-    margin-bottom: 6px;
-  }
-  .field label .req { color: var(--gold-dark); }
-  .field input, .field select, .field textarea {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1.5px solid var(--gray-200);
-    border-radius: 10px;
-    font-size: 15px;
-    font-family: inherit;
-    color: var(--black);
-    background: var(--white);
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(242,201,76,0.15);
-  }
-  .field input::placeholder, .field textarea::placeholder { color: var(--gray-400); }
-  .field-error { color: var(--red); font-size: 12px; margin-top: 4px; display: none; }
-  .field.has-error .field-error { display: block; }
-  .field.has-error input, .field.has-error select, .field.has-error textarea {
-    border-color: var(--red) !important;
-    box-shadow: 0 0 0 3px rgba(231,76,60,0.1);
-  }
-  .validation-toast {
-    position: fixed;
-    top: 80px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background: var(--red);
-    color: var(--white);
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    z-index: 200;
-    opacity: 0;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    box-shadow: 0 4px 16px rgba(231,76,60,0.3);
-  }
-  .validation-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-  }
-  .shake { animation: shake 0.3s ease; }
-  .field textarea { resize: vertical; min-height: 80px; }
-  .field select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%239E9E9E' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6l3.5 4 3.5-4z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-  }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .dynamic-list { margin-top: 8px; }
-  .dynamic-item {
-    background: var(--gray-100);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 10px;
-    position: relative;
-    border: 1px solid var(--gray-200);
-  }
-  .dynamic-item .remove-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    color: var(--red);
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    padding: 4px;
-  }
-  .add-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 18px;
-    background: var(--white);
-    border: 1.5px dashed var(--gray-200);
-    border-radius: 10px;
-    color: var(--gray-700);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-    margin-top: 6px;
-  }
-  .add-btn:hover {
-    border-color: var(--gold);
-    color: var(--gold-dark);
-    background: var(--gold-light);
-  }
-  .nav-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 28px;
-    padding-top: 20px;
-    border-top: 1px solid var(--gray-200);
-  }
-  .btn {
-    flex: 1;
-    padding: 14px 20px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-  }
-  .btn-back { background: var(--gray-100); color: var(--gray-700); }
-  .btn-back:hover { background: var(--gray-200); }
-  .btn-next {
-    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    color: var(--black);
-    box-shadow: 0 4px 14px rgba(212,160,23,0.3);
-  }
-  .btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,160,23,0.4); }
-  .btn-submit {
-    background: linear-gradient(135deg, var(--black), var(--dark));
-    color: var(--gold);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-  }
-  .btn-submit:hover { transform: translateY(-1px); }
-  .success-screen { display: none; text-align: center; padding: 60px 24px; }
-  .success-screen.active { display: block; }
-  .success-check {
-    width: 72px; height: 72px;
-    background: var(--gold-light);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 20px;
-  }
-  .success-check svg { width: 36px; height: 36px; }
-  .success-screen h2 { font-size: 22px; margin-bottom: 10px; }
-  .success-screen p { color: var(--gray-700); font-size: 15px; }
-  .privacy-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--gold-light);
-    padding: 12px 16px;
-    border-radius: 10px;
-    margin-bottom: 24px;
-    font-size: 13px;
-    color: var(--gray-700);
-  }
-  .privacy-badge svg { flex-shrink: 0; }
-  .sub-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--gray-700);
-    margin-bottom: 12px;
-  }
-  .sub-title-mt { margin-top: 20px; }
-  .fixed-block {
-    background: var(--gold-light);
-    border: 2px solid var(--gold);
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 18px;
-  }
-  .fixed-block-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--gold-dark);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .fixed-block-title svg { width: 18px; height: 18px; }
-  .goal-age-hint {
-    font-size: 12px;
-    color: var(--gold-dark);
-    margin-top: 4px;
-    font-style: italic;
-  }
-  @media (max-width: 480px) {
-    .hero { padding: 36px 20px 44px; }
-    .hero h1 { font-size: 24px; }
-    .form-container { padding: 16px 12px 100px; }
-    .form-section { padding: 22px 18px; }
-    .field-row { grid-template-columns: 1fr; }
-  }
+:root {
+  --bg: #0d0d0f;
+  --panel: #16161a;
+  --panel2: #1d1d22;
+  --border: #2a2a30;
+  --txt: #f0f0f2;
+  --txt2: #8c8c96;
+  --accent: #ff6b1f;
+  --accent2: #ff8c4d;
+  --accent-dim: rgba(255,107,31,0.12);
+  --green: #34d058;
+  --red: #ff4d4d;
+  --gray-bar: #3a3a42;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  background-image: radial-gradient(circle at 15% 0%, rgba(255,107,31,0.08), transparent 40%);
+  min-height: 100vh;
+}
+.mono { font-family: 'IBM Plex Mono', monospace; }
+
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+header .sub { color: var(--txt2); font-size: 13px; margin-top: 2px; }
+.period-badge {
+  background: var(--accent-dim); color: var(--accent2);
+  padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  border: 1px solid rgba(255,107,31,0.25);
+}
+
+/* KPI cards */
+.kpi-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px;
+}
+.kpi {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+}
+.kpi::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--accent);
+}
+.kpi .label { color: var(--txt2); font-size: 13px; font-weight: 500; margin-bottom: 10px; }
+.kpi .value { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+.kpi .delta { font-size: 13px; margin-top: 6px; font-weight: 600; }
+.delta.up { color: var(--red); }
+.delta.down { color: var(--green); }
+.delta.neutral { color: var(--txt2); }
+
+/* Chart panels */
+.panel-row {
+  display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; margin-bottom: 14px;
+}
+.panel {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px;
+}
+.panel h2 { font-size: 14px; font-weight: 600; color: var(--txt); margin-bottom: 18px; }
+.chart-wrap { position: relative; height: 260px; }
+.donut-wrap { position: relative; height: 220px; }
+.donut-center {
+  position: absolute; top: 42%; left: 50%; transform: translate(-50%,-50%);
+  text-align: center; pointer-events: none;
+}
+.donut-center .big { font-size: 26px; font-weight: 800; }
+.donut-center .small { font-size: 11px; color: var(--txt2); }
+.legend { margin-top: 12px; display: flex; flex-direction: column; gap: 7px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.legend-val { margin-left: auto; color: var(--txt2); font-weight: 600; }
+
+/* Table */
+.table-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--txt2); padding: 10px 12px; font-weight: 600; border-bottom: 1px solid var(--border);
+}
+th.r, td.r { text-align: right; }
+td { padding: 13px 12px; font-size: 14px; border-bottom: 1px solid rgba(42,42,48,0.5); }
+tr:last-child td { border-bottom: none; }
+.cat-tag { display: flex; align-items: center; gap: 9px; font-weight: 500; }
+.bar-cell { width: 120px; }
+.minibar { height: 6px; border-radius: 3px; background: var(--panel2); overflow: hidden; }
+.minibar-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+.pct { color: var(--txt2); font-size: 13px; }
+
+.alert-bar {
+  background: linear-gradient(90deg, rgba(255,77,77,0.12), transparent);
+  border: 1px solid rgba(255,77,77,0.25); border-left: 3px solid var(--red);
+  border-radius: 12px; padding: 14px 18px; margin-bottom: 14px;
+  font-size: 14px; color: var(--txt);
+}
+.alert-bar strong { color: var(--red); }
+
+footer { text-align: center; color: var(--txt2); font-size: 12px; margin-top: 20px; padding-bottom: 20px; }
+
+@media (max-width: 760px) {
+  .kpi-row { grid-template-columns: 1fr; }
+  .panel-row { grid-template-columns: 1fr; }
+  .kpi .value { font-size: 28px; }
+  .bar-cell { display: none; }
+  th.bar-col { display: none; }
+}
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <div class="hero-brand">
-    <div class="hero-brand-icon">GB</div>
-    <span class="hero-brand-name">Gustavo de Boer</span>
+<header>
+  <div>
+    <h1>Dashboard Financeiro</h1>
+    <div class="sub">Fatura de Maio/2026 · fechamento 25/05</div>
   </div>
-  <h1>Seu <span>diagnostico financeiro</span> personalizado</h1>
-  <p>Responda as perguntas abaixo para que eu possa montar uma estrategia sob medida para seus objetivos.</p>
+  <div class="period-badge">Mai 2026</div>
+</header>
+
+<div class="alert-bar">
+  <strong>Estouro de R$ 2.832</strong> sobre a meta de R$ 6.500. Segundo maior mês do projeto — quebrou 3 meses de queda. Cassino neutralizado (voltou no Pix).
 </div>
 
-<div class="progress-wrap" id="progressWrap">
-  <div class="progress-info">
-    <span class="step-label" id="stepLabel">Dados pessoais</span>
-    <span class="step-count" id="stepCount">1 de 6</span>
+<!-- KPIs -->
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="label">Gasto Total (neutralizado)</div>
+    <div class="value mono">R$ 9.332</div>
+    <div class="delta up">▲ 24,1% vs Abril (R$ 7.523)</div>
   </div>
-  <div class="progress-bar">
-    <div class="progress-bar-fill" id="progressFill" style="width:16.7%"></div>
+  <div class="kpi">
+    <div class="label">vs Meta (R$ 6.500)</div>
+    <div class="value mono">+R$ 2.832</div>
+    <div class="delta up">▲ 43,6% acima do alvo</div>
   </div>
-</div>
-
-<div class="form-container">
-  <form id="diagnosticForm" onsubmit="return false;">
-
-    <!-- STEP 1 -->
-    <div class="form-section active" data-step="1">
-      <div class="section-header">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <div>
-          <h2>Dados pessoais</h2>
-          <div class="sub">Informacoes basicas para contato</div>
-        </div>
-      </div>
-
-      <!-- Consentimento LGPD -->
-      <div style="padding:20px;border-radius:12px;background:rgba(212,160,23,0.06);border:1px solid rgba(212,160,23,0.2);margin-bottom:16px;">
-        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;">
-          <svg width="20" height="20" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;"><path d="M8 1L3 3.5V7c0 3.5 2.1 6.2 5 7 2.9-.8 5-3.5 5-7V3.5L8 1z" fill="#D4A017"/><path d="M7 8.5l-1.5-1.5-.7.7L7 9.9l3.2-3.2-.7-.7L7 8.5z" fill="#fff"/></svg>
-          <div style="font-size:13px;color:#555;line-height:1.5;">
-            O preenchimento deste formulario e <strong>voluntario e de sua livre escolha</strong>. As informacoes fornecidas serao utilizadas <strong>exclusivamente para fins de diagnostico e planejamento financeiro</strong> relacionados ao seu atendimento, nao sendo compartilhadas com terceiros para outras finalidades. Voce pode solicitar a exclusao dos seus dados a qualquer momento.
-          </div>
-        </div>
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;background:rgba(255,255,255,0.7);border-radius:8px;border:1px solid #e0e0e0;transition:border-color .2s;" id="consentLabel">
-          <input type="checkbox" id="consentCheck" name="consentimento_lgpd" value="Sim" style="width:20px;height:20px;accent-color:#D4A017;cursor:pointer;flex-shrink:0;">
-          <span style="font-size:14px;font-weight:500;color:#1a1a1a;">Li e concordo com o uso dos meus dados conforme descrito acima.</span>
-        </label>
-        <div id="consentError" style="display:none;color:#D85A30;font-size:12px;margin-top:8px;padding-left:4px;">Voce precisa concordar com o termo para continuar.</div>
-      </div>
-
-      <div class="field">
-        <label>Nome completo <span class="req">*</span></label>
-        <input type="text" name="nome" placeholder="Digite seu nome completo" required>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>CPF <span class="req">*</span></label>
-          <input type="text" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
-        </div>
-        <div class="field">
-          <label>Data de nascimento <span class="req">*</span></label>
-          <input type="date" name="nascimento" required>
-        </div>
-      </div>
-      <div class="field">
-        <label>E-mail <span class="req">*</span></label>
-        <input type="email" name="email" placeholder="seu@email.com" required>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Telefone <span class="req">*</span></label>
-          <input type="text" name="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
-        </div>
-        <div class="field">
-          <label>Estado civil</label>
-          <select name="estado_civil">
-            <option value="">Selecione</option>
-            <option>Solteiro(a)</option>
-            <option>Casado(a)</option>
-            <option>Uniao estavel</option>
-            <option>Divorciado(a)</option>
-            <option>Viuvo(a)</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>Melhor horario para contato</label>
-        <input type="text" name="horario_contato" placeholder="Ex.: horario comercial">
-      </div>
-      <div class="nav-buttons">
-        <button type="button" class="btn btn-next" onclick="nextStep()">Continuar</button>
-      </div>
-    </div>
-
-    <!-- STEP 2 -->
-    <div class="form-section" data-step="2">
-      <div class="section-header">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div>
-          <h2>Estrutura familiar</h2>
-          <div class="sub">Membros que dependem financeiramente de voce</div>
-        </div>
-      </div>
-      <div class="dynamic-list" id="familyList"></div>
-      <button type="button" class="add-btn" onclick="addFamily()">+ Adicionar membro</button>
-      <div class="nav-buttons">
-        <button type="button" class="btn btn-back" onclick="prevStep()">Voltar</button>
-        <button type="button" class="btn btn-next" onclick="nextStep()">Continuar</button>
-      </div>
-    </div>
-
-    <!-- STEP 3 -->
-    <div class="form-section" data-step="3">
-      <div class="section-header">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-        </div>
-        <div>
-          <h2>Objetivos financeiros</h2>
-          <div class="sub">O que voce deseja conquistar?</div>
-        </div>
-      </div>
-
-      <div class="fixed-block">
-        <div class="fixed-block-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          Aposentadoria (obrigatorio)
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Idade desejada para aposentar <span class="req">*</span></label>
-            <input type="number" name="aposent_idade" placeholder="Ex.: 60" min="1" max="120" required>
-            <div class="goal-age-hint" id="aposentHint"></div>
-          </div>
-          <div class="field">
-            <label>Renda mensal desejada <span class="req">*</span></label>
-            <input type="text" name="aposent_renda" placeholder="R$ 0,00" data-mask="money" required>
-          </div>
-        </div>
-      </div>
-
-      <div class="sub-title">Outros objetivos</div>
-      <div class="dynamic-list" id="goalsList"></div>
-      <button type="button" class="add-btn" onclick="addGoal()">+ Adicionar objetivo</button>
-      <div class="nav-buttons">
-        <button type="button" class="btn btn-back" onclick="prevStep()">Voltar</button>
-        <button type="button" class="btn btn-next" onclick="nextStep()">Continuar</button>
-      </div>
-    </div>
-
-    <!-- STEP 4 -->
-    <div class="form-section" data-step="4">
-      <div class="section-header">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <div>
-          <h2>Rendas e despesas</h2>
-          <div class="sub">Seu fluxo financeiro mensal</div>
-        </div>
-      </div>
-      <div class="sub-title">Rendas</div>
-      <div class="dynamic-list" id="incomeList"></div>
-      <button type="button" class="add-btn" onclick="addIncome()">+ Adicionar renda</button>
-      <div class="sub-title sub-title-mt">Despesas</div>
-      <div class="dynamic-list" id="expenseList"></div>
-      <button type="button" class="add-btn" onclick="addExpense()">+ Adicionar despesa</button>
-      <div class="nav-buttons">
-        <button type="button" class="btn btn-back" onclick="prevStep()">Voltar</button>
-        <button type="button" class="btn btn-next" onclick="nextStep()">Continuar</button>
-      </div>
-    </div>
-
-    <!-- STEP 5 -->
-    <div class="form-section" data-step="5">
-      <div class="section-header">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-        </div>
-        <div>
-          <h2>Investimentos</h2>
-          <div class="sub">Seus investimentos atuais</div>
-        </div>
-      </div>
-      <div class="sub-title">Nacionais</div>
-      <div class="dynamic-list" id="investNacList"></div>
-      <button type="button" class="add-btn" onclick="addInvestNac()">+ Adicionar investimento nacional</button>
-      <div class="sub-title sub-title-mt">Globais</div>
-      <div class="dynamic-list" id="investGlobList"></div>
-      <button type="button" class="add-btn" onclick="addInvestGlob()">+ Adicionar investimento global</button>
-      <div class="nav-buttons">
-        <button type="button" class="btn btn-back" onclick="prevStep()">Voltar</button>
-        <button type="button" class="btn btn-next" onclick="nextStep()">Continuar</button>
-      </div>
-    </div>
-
-    <!-- STEP 6 -->
-    <div class="form-section" data-step="6">
-      <div class="section-header">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </div>
-        <div>
-          <h2>Bens e participacoes</h2>
-          <div class="sub">Imoveis, veiculos e participacoes societarias</div>
-        </div>
-      </div>
-      <div class="dynamic-list" id="assetsList"></div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
-        <button type="button" class="add-btn" onclick="addAsset('Imovel')">+ Imovel</button>
-        <button type="button" class="add-btn" onclick="addAsset('Veiculo')">+ Veiculo</button>
-        <button type="button" class="add-btn" onclick="addAsset('Participacao societaria')">+ Participacao societaria</button>
-        <button type="button" class="add-btn" onclick="addAsset('Outro bem')">+ Outro bem</button>
-      </div>
-      <div class="nav-buttons">
-        <button type="button" class="btn btn-back" onclick="prevStep()">Voltar</button>
-        <button type="button" class="btn btn-submit" onclick="submitForm()">Enviar diagnostico</button>
-      </div>
-    </div>
-
-  </form>
-
-  <div class="success-screen" id="successScreen">
-    <div class="success-check">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-    </div>
-    <h2>Diagnostico enviado!</h2>
-    <p>Obrigado por preencher. Entrarei em contato em breve para conversarmos sobre sua estrategia financeira personalizada.</p>
+  <div class="kpi">
+    <div class="label">Maior Categoria</div>
+    <div class="value mono">R$ 2.483</div>
+    <div class="delta neutral">Restaurantes · 26,6% do total</div>
   </div>
 </div>
 
-<div class="validation-toast" id="validationToast"></div>
+<!-- Charts -->
+<div class="panel-row">
+  <div class="panel">
+    <h2>Evolução Mensal da Fatura</h2>
+    <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
+  </div>
+  <div class="panel">
+    <h2>Gasto por Categoria</h2>
+    <div class="donut-wrap">
+      <canvas id="donutChart"></canvas>
+      <div class="donut-center">
+        <div class="big mono">R$ 9,3k</div>
+        <div class="small">total</div>
+      </div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="table-panel">
+  <h2 style="font-size:14px;font-weight:600;margin-bottom:14px;">Análise por Categoria</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Categoria</th>
+        <th class="r">Valor</th>
+        <th class="r">% Total</th>
+        <th class="bar-col bar-cell"></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<footer>Dados reais das faturas · Cassino tratado como neutro (regra acordada) · Sonho Árabe e Galleria ajustados pelos valores divididos</footer>
 
 <script>
-var currentStep = 1;
-var totalSteps = 6;
-var stepLabels = ['Dados pessoais','Estrutura familiar','Objetivos','Rendas e despesas','Investimentos','Bens e participacoes'];
+const categorias = [
+  { nome: 'Restaurantes',    valor: 2483, cor: '#ff6b1f' },
+  { nome: 'Viagens',         valor: 1987, cor: '#ff8c4d' },
+  { nome: 'Carro',           valor: 1362, cor: '#ffac7a' },
+  { nome: 'Bares/Baladas',   valor: 696,  cor: '#e85a10' },
+  { nome: 'Outros',          valor: 614,  cor: '#5a5a64' },
+  { nome: 'Saúde/Farmácia',  valor: 583,  cor: '#6e6e78' },
+  { nome: 'Assinaturas',     valor: 473,  cor: '#4a4a52' },
+  { nome: 'Supermercado',    valor: 384,  cor: '#82828c' },
+  { nome: 'Transporte',      valor: 314,  cor: '#3a3a42' },
+  { nome: 'Parcelas',        valor: 228,  cor: '#969aa0' },
+  { nome: 'Pet',             valor: 136,  cor: '#2e2e34' },
+  { nome: 'Games',           valor: 72,   cor: '#a8a8b0' },
+];
+const total = categorias.reduce((s,c)=>s+c.valor,0);
 
-function showStep(n) {
-  var sections = document.querySelectorAll('.form-section');
-  for (var i = 0; i < sections.length; i++) {
-    sections[i].classList.remove('active');
-  }
-  var target = document.querySelector('[data-step="' + n + '"]');
-  if (target) target.classList.add('active');
-  document.getElementById('stepLabel').textContent = stepLabels[n - 1];
-  document.getElementById('stepCount').textContent = n + ' de ' + totalSteps;
-  document.getElementById('progressFill').style.width = Math.round((n / totalSteps) * 100) + '%';
-  window.scrollTo(0, 0);
-}
+// Line chart — evolução
+const histLabels = ['Jul','Ago','Set','Out','Nov','Dez','Jan','Mar','Abr','Mai'];
+const histValues = [7322,6107,7382,8607,8041,9247,10938,8070,7523,9332];
+const metaLine = histLabels.map(()=>6500);
 
-function showToast(msg) {
-  var toast = document.getElementById('validationToast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(function() { toast.classList.remove('show'); }, 3000);
-}
-
-function clearFieldErrors() {
-  var errorFields = document.querySelectorAll('.field.has-error');
-  for (var i = 0; i < errorFields.length; i++) {
-    errorFields[i].classList.remove('has-error');
-  }
-}
-
-function nextStep() {
-  clearFieldErrors();
-  var stepFields = document.querySelectorAll('[data-step="' + currentStep + '"] [required]');
-  var firstInvalid = null;
-  var invalidCount = 0;
-  for (var i = 0; i < stepFields.length; i++) {
-    if (!stepFields[i].value || !stepFields[i].value.trim()) {
-      var fieldWrap = stepFields[i].closest('.field');
-      if (fieldWrap) fieldWrap.classList.add('has-error');
-      if (!firstInvalid) firstInvalid = stepFields[i];
-      invalidCount++;
-    }
-  }
-  if (firstInvalid) {
-    firstInvalid.focus();
-    firstInvalid.closest('.form-section').classList.add('shake');
-    setTimeout(function() {
-      var section = document.querySelector('.form-section.shake');
-      if (section) section.classList.remove('shake');
-    }, 400);
-    showToast('Preencha ' + (invalidCount === 1 ? 'o campo obrigatorio' : 'os ' + invalidCount + ' campos obrigatorios') + ' para continuar');
-    return;
-  }
-  // Validar consentimento LGPD no Step 1
-  if (currentStep === 1) {
-    var consentCheck = document.getElementById('consentCheck');
-    var consentError = document.getElementById('consentError');
-    var consentLabel = document.getElementById('consentLabel');
-    if (!consentCheck.checked) {
-      consentError.style.display = 'block';
-      consentLabel.style.borderColor = '#D85A30';
-      consentLabel.scrollIntoView({behavior: 'smooth', block: 'center'});
-      showToast('Voce precisa concordar com o termo para continuar');
-      return;
-    }
-    consentError.style.display = 'none';
-    consentLabel.style.borderColor = '#D4A017';
-  }
-  if (currentStep < totalSteps) {
-    currentStep++;
-    showStep(currentStep);
-  }
-}
-
-function prevStep() {
-  if (currentStep > 1) {
-    currentStep--;
-    showStep(currentStep);
-  }
-}
-
-// Masks
-function maskCPF(el) {
-  var v = el.value.replace(/\D/g, '').substring(0, 11);
-  v = v.replace(/(\d{3})(\d)/, '$1.$2');
-  v = v.replace(/(\d{3})(\d)/, '$1.$2');
-  v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-  el.value = v;
-}
-function maskPhone(el) {
-  var v = el.value.replace(/\D/g, '').substring(0, 11);
-  v = v.replace(/(\d{2})(\d)/, '($1) $2');
-  v = v.replace(/(\d{5})(\d)/, '$1-$2');
-  el.value = v;
-}
-function maskMoney(el) {
-  var v = el.value.replace(/\D/g, '');
-  if (!v) { el.value = ''; return; }
-  var num = parseInt(v, 10) / 100;
-  el.value = 'R$ ' + num.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-}
-
-// Attach masks and clear errors on input
-document.addEventListener('input', function(e) {
-  var el = e.target;
-  if (el.name === 'cpf') maskCPF(el);
-  if (el.name === 'telefone') maskPhone(el);
-  if (el.getAttribute('data-mask') === 'money') maskMoney(el);
-  // Clear error state when user starts typing
-  var fieldWrap = el.closest('.field');
-  if (fieldWrap && fieldWrap.classList.contains('has-error')) {
-    fieldWrap.classList.remove('has-error');
-  }
-});
-
-// Dynamic items
-var counters = {family:0, goal:0, income:0, expense:0, investNac:0, investGlob:0, asset:0};
-
-function removeItem(btn) {
-  btn.parentElement.remove();
-}
-
-function addFamily() {
-  counters.family++;
-  var id = counters.family;
-  var html = '<div class="dynamic-item">'
-    + '<button type="button" class="remove-btn" onclick="removeItem(this)">X</button>'
-    + '<div class="field"><label>Nome</label><input type="text" name="familia_' + id + '_nome" placeholder="Nome do membro"></div>'
-    + '<div class="field-row">'
-    + '<div class="field"><label>Parentesco</label><select name="familia_' + id + '_parentesco"><option value="">Selecione</option><option>Conjuge</option><option>Filho(a)</option><option>Pai/Mae</option><option>Outro</option></select></div>'
-    + '<div class="field"><label>Idade</label><input type="number" name="familia_' + id + '_idade" placeholder="Idade"></div>'
-    + '</div>'
-    + '<div class="field"><label>Dependente financeiro?</label><select name="familia_' + id + '_dependente"><option>Sim</option><option>Nao</option></select></div>'
-    + '</div>';
-  document.getElementById('familyList').insertAdjacentHTML('beforeend', html);
-}
-
-function addGoal() {
-  counters.goal++;
-  var id = counters.goal;
-  var html = '<div class="dynamic-item">'
-    + '<button type="button" class="remove-btn" onclick="removeItem(this)">X</button>'
-    + '<div class="field"><label>O que voce deseja?</label><input type="text" name="obj_' + id + '_tipo" placeholder="Ex.: Compra de imovel, viagem, faculdade dos filhos..."></div>'
-    + '<div class="field-row">'
-    + '<div class="field"><label>Idade-alvo para atingir</label><input type="number" name="obj_' + id + '_idade" class="goal-age-input" placeholder="Ex.: 45" min="1" max="120"><div class="goal-age-hint"></div></div>'
-    + '<div class="field"><label>Valor estimado</label><input type="text" name="obj_' + id + '_valor" placeholder="R$ 0,00" data-mask="money"></div>'
-    + '</div>'
-    + '</div>';
-  document.getElementById('goalsList').insertAdjacentHTML('beforeend', html);
-  updateAgeHints();
-}
-
-function addIncome() {
-  counters.income++;
-  var id = counters.income;
-  var html = '<div class="dynamic-item">'
-    + '<button type="button" class="remove-btn" onclick="removeItem(this)">X</button>'
-    + '<div class="field-row">'
-    + '<div class="field"><label>Fonte</label><input type="text" name="renda_' + id + '_fonte" placeholder="Ex.: Salario CLT"></div>'
-    + '<div class="field"><label>Valor mensal</label><input type="text" name="renda_' + id + '_valor" placeholder="R$ 0,00" data-mask="money"></div>'
-    + '</div>'
-    + '</div>';
-  document.getElementById('incomeList').insertAdjacentHTML('beforeend', html);
-}
-
-function addExpense() {
-  counters.expense++;
-  var id = counters.expense;
-  var html = '<div class="dynamic-item">'
-    + '<button type="button" class="remove-btn" onclick="removeItem(this)">X</button>'
-    + '<div class="field-row">'
-    + '<div class="field"><label>Descricao</label><input type="text" name="despesa_' + id + '_desc" placeholder="Ex.: Aluguel, alimentacao..."></div>'
-    + '<div class="field"><label>Valor mensal</label><input type="text" name="despesa_' + id + '_valor" placeholder="R$ 0,00" data-mask="money"></div>'
-    + '</div>'
-    + '</div>';
-  document.getElementById('expenseList').insertAdjacentHTML('beforeend', html);
-}
-
-function addInvestNac() {
-  counters.investNac++;
-  var id = counters.investNac;
-  var html = '<div class="dynamic-item">'
-    + '<button type="button" class="remove-btn" onclick="removeItem(this)">X</button>'
-    + '<div class="field-row">'
-    + '<div class="field"><label>Tipo</label><select name="invest_nac_' + id + '_tipo"><option value="">Selecione</option><option>Renda Fixa</option><option>Acoes</option><option>Fundos</option><option>Previdencia</option><option>Tesouro Direto</option><option>Poupanca</option><option>Outro</option></select></div>'
-    + '<div class="field"><label>Valor aplicado</label><input type="text" name="invest_nac_' + id + '_valor" placeholder="R$ 0,00" data-mask="money"></div>'
-    + '</div>'
-    + '<div class="field"><label>Instituicao</label><input type="text" name="invest_nac_' + id + '_inst" placeholder="Ex.: XP, BTG, Nubank..."></div>'
-    + '</div>';
-  document.getElementById('investNacList').insertAdjacentHTML('beforeend', html);
-}
-
-function addInvestGlob() {
-  counters.investGlob++;
-  var id = counters.investGlob;
-  var html = '<div class="dynamic-item">'
-    + '<button type="button" class="remove-btn" onclick="removeItem(this)">X</button>'
-    + '<div class="field-row">'
-    + '<div class="field"><label>Tipo</label><select name="invest_glob_' + id + '_tipo"><option value="">Selecione</option><option>ETFs</option><option>Stocks</option><option>REITs</option><option>Bonds</option><option>Crypto</option><option>Outro</option></select></div>'
-    + '<div class="field"><label>Valor (USD)</label><input type="text" name="invest_glob_' + id + '_valor" placeholder="US$ 0.00"></div>'
-    + '</div>'
-    + '<div class="field"><label>Plataforma</label><input type="text" name="invest_glob_' + id + '_plat" placeholder="Ex.: Avenue, Interactive Brokers..."></div>'
-    + '</div>';
-  document.getElementById('investGlobList').insertAdjacentHTML('beforeend', html);
-}
-
-function addAsset(tipo) {
-  counters.asset++;
-  var id = counters.asset;
-  var html = '<div class="dynamic-item">'
-    + '<button type="button" class="remove-btn" onclick="removeItem(this)">X</button>'
-    + '<div class="field"><label>Tipo</label><input type="text" name="bem_' + id + '_tipo" value="' + tipo + '" readonly style="background:var(--gray-100);"></div>'
-    + '<div class="field"><label>Descricao</label><input type="text" name="bem_' + id + '_desc" placeholder="Ex.: Apartamento 2 quartos em SP"></div>'
-    + '<div class="field"><label>Valor estimado</label><input type="text" name="bem_' + id + '_valor" placeholder="R$ 0,00" data-mask="money"></div>'
-    + '</div>';
-  document.getElementById('assetsList').insertAdjacentHTML('beforeend', html);
-}
-
-// Age calculation and hints
-function getAge() {
-  var nascInput = document.querySelector('input[name="nascimento"]');
-  if (!nascInput || !nascInput.value) return null;
-  var birth = new Date(nascInput.value);
-  var today = new Date();
-  var age = today.getFullYear() - birth.getFullYear();
-  var m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
-  return age;
-}
-
-function updateAgeHints() {
-  var age = getAge();
-  // Aposentadoria hint
-  var aposentInput = document.querySelector('input[name="aposent_idade"]');
-  var aposentHint = document.getElementById('aposentHint');
-  if (aposentInput && aposentHint && age !== null) {
-    var targetAge = parseInt(aposentInput.value);
-    if (targetAge && targetAge > age) {
-      aposentHint.textContent = 'Voce tem ' + age + ' anos. Faltam ' + (targetAge - age) + ' anos.';
-    } else if (targetAge && targetAge <= age) {
-      aposentHint.textContent = 'Voce ja tem ' + age + ' anos. Idade-alvo deve ser maior.';
-    } else {
-      aposentHint.textContent = age ? 'Sua idade atual: ' + age + ' anos' : '';
-    }
-  }
-  // Other goals hints
-  var goalInputs = document.querySelectorAll('.goal-age-input');
-  for (var i = 0; i < goalInputs.length; i++) {
-    var input = goalInputs[i];
-    var hint = input.parentElement.querySelector('.goal-age-hint');
-    if (hint && age !== null) {
-      var target = parseInt(input.value);
-      if (target && target > age) {
-        hint.textContent = 'Faltam ' + (target - age) + ' anos (voce tem ' + age + ')';
-      } else if (target && target <= age) {
-        hint.textContent = 'Idade-alvo deve ser maior que ' + age;
-      } else {
-        hint.textContent = '';
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: histLabels,
+    datasets: [
+      {
+        label: 'Fatura',
+        data: histValues,
+        borderColor: '#ff6b1f',
+        backgroundColor: (ctx) => {
+          const g = ctx.chart.ctx.createLinearGradient(0,0,0,260);
+          g.addColorStop(0,'rgba(255,107,31,0.3)');
+          g.addColorStop(1,'rgba(255,107,31,0)');
+          return g;
+        },
+        borderWidth: 3, fill: true, tension: 0.35,
+        pointBackgroundColor: '#ff6b1f', pointBorderColor: '#0d0d0f',
+        pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6,
+      },
+      {
+        label: 'Meta', data: metaLine,
+        borderColor: '#34d058', borderWidth: 1.5, borderDash: [6,4],
+        fill: false, pointRadius: 0, tension: 0,
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color:'#8c8c96', font:{family:'Sora',size:12}, usePointStyle:true, pointStyleWidth:10 } },
+      tooltip: {
+        backgroundColor:'#1d1d22', borderColor:'#2a2a30', borderWidth:1,
+        titleColor:'#f0f0f2', bodyColor:'#f0f0f2', padding:12, cornerRadius:8,
+        callbacks: { label: (c)=> ' R$ '+c.parsed.y.toLocaleString('pt-BR') }
+      }
+    },
+    scales: {
+      x: { grid:{color:'rgba(42,42,48,0.4)'}, ticks:{color:'#8c8c96', font:{family:'IBM Plex Mono',size:11}} },
+      y: {
+        grid:{color:'rgba(42,42,48,0.4)'},
+        ticks:{ color:'#8c8c96', font:{family:'IBM Plex Mono',size:11},
+                callback:(v)=> 'R$ '+(v/1000)+'k' }
       }
     }
   }
-}
+});
 
-document.addEventListener('input', function(e) {
-  if (e.target.name === 'nascimento' || e.target.name === 'aposent_idade' || e.target.classList.contains('goal-age-input')) {
-    updateAgeHints();
+// Donut
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: categorias.map(c=>c.nome),
+    datasets: [{
+      data: categorias.map(c=>c.valor),
+      backgroundColor: categorias.map(c=>c.cor),
+      borderColor: '#16161a', borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor:'#1d1d22', borderColor:'#2a2a30', borderWidth:1,
+        titleColor:'#f0f0f2', bodyColor:'#f0f0f2', padding:12, cornerRadius:8,
+        callbacks: { label: (c)=> ' R$ '+c.parsed.toLocaleString('pt-BR')+' ('+(c.parsed/total*100).toFixed(1)+'%)' }
+      }
+    }
   }
 });
 
-// Submit
-function submitForm() {
-  // Validar consentimento LGPD
-  var consentCheck = document.getElementById('consentCheck');
-  var consentError = document.getElementById('consentError');
-  var consentLabel = document.getElementById('consentLabel');
-  if (!consentCheck.checked) {
-    consentError.style.display = 'block';
-    consentLabel.style.borderColor = '#D85A30';
-    consentLabel.scrollIntoView({behavior: 'smooth', block: 'center'});
-    return;
-  }
-  consentError.style.display = 'none';
-  consentLabel.style.borderColor = '#D4A017';
+// Legend (top 5)
+const legendEl = document.getElementById('legend');
+categorias.slice(0,5).forEach(c=>{
+  const pct = (c.valor/total*100).toFixed(1);
+  legendEl.innerHTML += `<div class="legend-item">
+    <span class="legend-dot" style="background:${c.cor}"></span>
+    <span>${c.nome}</span>
+    <span class="legend-val">${pct}%</span>
+  </div>`;
+});
 
-  var fd = new FormData(document.getElementById('diagnosticForm'));
-  var data = {};
-  var entries = fd.entries();
-  var entry = entries.next();
-  while (!entry.done) {
-    data[entry.value[0]] = entry.value[1];
-    entry = entries.next();
-  }
-  data.consentimento_lgpd = consentCheck.checked ? 'Sim' : 'Nao';
-  data.consentimento_data = new Date().toISOString();
-  data.submitted_at = new Date().toISOString();
-
-  // Google Sheets integration
-  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjXJvOMXtxpv-tJJoNwDWBg_ICLDVzihslz-9AF-V4QUVYImm2bmtXFDwERs1e_ygq/exec';
-
-  if (GOOGLE_SCRIPT_URL) {
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(data)
-    }).then(function() {
-      console.log('Enviado para Google Sheets');
-    }).catch(function(err) {
-      console.log('Sheets error:', err);
-    });
-  }
-
-  // Download backup JSON
-  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'diagnostico_' + (data.nome || 'cliente') + '_' + new Date().toISOString().substring(0, 10) + '.json';
-  // a.click(); // Descomente para baixar JSON automaticamente
-
-  var sections = document.querySelectorAll('.form-sec
+// Table
+const tbody = document.getElementById('tableBody');
+const maxVal = Math.max(...categorias.map(c=>c.valor));
+categorias.forEach(c=>{
+  const pct = (c.valor/total*100).toFixed(1);
+  tbody.innerHTML += `<tr>
+    <td><span class="cat-tag"><span class="legend-dot" style="background:${c.cor}"></span>${c.nome}</span></td>
+    <td class="r mono">R$ ${c.valor.toLocaleString('pt-BR')}</td>
+    <td class="r pct">${pct}%</td>
+    <td class="bar-cell"><div class="minibar"><div class="minibar-fill" style="width:${c.valor/maxVal*100}%"></div></div></td>
+  </tr>`;
+});
+</script>
+</body>
+</html>
